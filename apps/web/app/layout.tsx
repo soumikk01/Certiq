@@ -4,6 +4,7 @@ import { Instrument_Serif, Inter } from "next/font/google";
 
 import { HEAD_THEME_SCRIPT } from "./head-theme-script";
 import { ThemeProvider } from "@/lib/theme/ThemeProvider";
+import { AuthProvider } from "@/lib/auth/AuthProvider";
 import "./globals.css";
 
 const serif = Instrument_Serif({
@@ -69,7 +70,9 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: HEAD_THEME_SCRIPT }} />
       </head>
       <body className="bg-bg-1 text-text-body font-sans antialiased">
-        <ThemeProvider>{children}</ThemeProvider>
+        <AuthProvider>
+          <ThemeProvider>{children}</ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );
