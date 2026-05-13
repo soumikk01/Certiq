@@ -1,5 +1,8 @@
 // @certiq/ui — shared React primitives for the Certiq landing page.
 
+export { Logo } from "./Logo";
+export type { LogoProps } from "./Logo";
+
 export { Button } from "./Button";
 export type { ButtonProps } from "./Button";
 

@@ -22,9 +22,9 @@ export function CertificateStorageSection(): JSX.Element {
   return (
     <SectionWrapper
       id="certificates"
-      eyebrow="Certificate Storage"
-      heading="Store and verify credentials."
-      description="Upload certificates, attach them to your resume, and let recruiters verify them instantly."
+      eyebrow="Certificate Vault"
+      heading="Credentials that speak for themselves."
+      description="Upload once, attach anywhere. Certiq renders every credential with a verifiable badge so recruiters never have to take your word for it."
     >
       <motion.div
         ref={ref}

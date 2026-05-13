@@ -34,8 +34,8 @@ export function BuilderDemo(): JSX.Element {
     <SectionWrapper
       id="builder"
       eyebrow="Resume Builder"
-      heading="Build in real time."
-      description="Edit your resume with a live preview that updates instantly. No page refreshes, no waiting."
+      heading="Write it once. See it land."
+      description="Every keystroke renders instantly in your preview. No drafts. No reloads. Just the resume you meant to write."
     >
       <motion.div
         ref={ref}

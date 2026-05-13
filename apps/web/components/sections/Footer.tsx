@@ -7,6 +7,7 @@
  */
 
 import { FOOTER_DATA } from "@/data/footer";
+import { Logo } from "@certiq/ui";
 
 const SOCIAL_ICONS: Record<string, string> = {
   twitter: "𝕏",
@@ -27,14 +28,11 @@ export function Footer(): JSX.Element {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12">
           {/* Logo + tagline */}
           <div className="lg:col-span-2">
-            <a href="#" className="flex items-center gap-2 text-text-headline font-serif text-xl font-normal">
-              <span className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center text-[#0F172A] font-bold text-sm">
-                C
-              </span>
-              {FOOTER_DATA.logoMark}
+            <a href="#" aria-label="Certiq home" className="inline-block focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 rounded">
+              <Logo size={32} />
             </a>
             <p className="text-text-muted font-sans text-sm mt-3 max-w-xs">
-              Build resumes that feel premium. Cinematic templates, AI assistance, and verifiable credentials.
+              Resumes worth opening. Cinematic templates, AI-assisted writing, and verifiable credentials in one quiet workspace.
             </p>
           </div>
 

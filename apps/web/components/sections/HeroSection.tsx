@@ -64,10 +64,10 @@ export function HeroSection(): JSX.Element {
             className="font-serif text-text-headline font-normal leading-[0.9] tracking-[-0.04em]"
             style={{ fontSize: "clamp(64px, 9vw, 120px)" }}
           >
-            Build resumes that feel premium.
+            Resumes worth opening.
           </h1>
           <p className="text-text-body font-sans text-lg sm:text-xl max-w-lg">
-            Certiq is a cinematic resume builder with premium templates, AI-assisted editing, ATS scoring, and verifiable certificate storage.
+            Certiq turns your career story into a document recruiters actually pause on. Cinematic templates, AI that writes in your voice, and credentials that verify themselves.
           </p>
           <div className="flex flex-wrap gap-4 mt-2">
             <a

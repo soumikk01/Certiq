@@ -35,9 +35,9 @@ export function BentoGrid(): JSX.Element {
   return (
     <SectionWrapper
       id="bento"
-      eyebrow="Everything You Need"
-      heading="Built for modern professionals."
-      description="A comprehensive toolkit designed to help you stand out in today's competitive job market."
+      eyebrow="The whole workspace"
+      heading="Small features. Large impact."
+      description="Everything you'd expect from a serious resume tool, and a few things you didn't know to ask for."
     >
       <motion.div
         ref={ref}

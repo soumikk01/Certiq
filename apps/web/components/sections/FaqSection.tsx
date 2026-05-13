@@ -28,9 +28,9 @@ export function FaqSection(): JSX.Element {
   return (
     <SectionWrapper
       id="faq"
-      eyebrow="FAQ"
-      heading="Questions? Answers."
-      description="Everything you need to know about Certiq."
+      eyebrow="Questions, answered"
+      heading="You probably wanted to ask."
+      description="The honest answers we give anyone considering Certiq. No sales voice."
     >
       <motion.div
         ref={ref}

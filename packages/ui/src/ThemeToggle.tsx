@@ -1,3 +1,7 @@
+"use client";
+
+import { useState, useEffect } from "react";
+
 export interface ThemeToggleProps {
   theme: "dark" | "light";
   onToggle: () => void;
@@ -7,10 +11,21 @@ export interface ThemeToggleProps {
 /**
  * 44×44 theme toggle button with aria-pressed and theme-aware aria-label.
  *
+ * Both icons are always rendered; visibility is toggled via CSS to avoid
+ * hydration mismatch when the inline theme script sets a different theme
+ * before React hydrates.
+ *
  * Requirements: 22.5, 22.6, 20.4
  */
 export function ThemeToggle({ theme, onToggle, className = "" }: ThemeToggleProps): JSX.Element {
-  const isDark = theme === "dark";
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Before mount, render a neutral placeholder to avoid hydration mismatch
+  const isDark = mounted ? theme === "dark" : true;
 
   return (
     <button
@@ -20,6 +35,7 @@ export function ThemeToggle({ theme, onToggle, className = "" }: ThemeToggleProp
       aria-pressed={isDark ? "true" : "false"}
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
       className={`inline-flex items-center justify-center w-11 h-11 rounded-full border border-border-card bg-surface-card-1 backdrop-blur-md transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 ${className}`.trim()}
+      suppressHydrationWarning
     >
       {isDark ? (
         <svg

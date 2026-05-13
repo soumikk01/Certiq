@@ -10,7 +10,7 @@
  */
 
 import { useState, useEffect, useCallback } from "react";
-import { ThemeToggle } from "@certiq/ui";
+import { Logo, ThemeToggle } from "@certiq/ui";
 import { useTheme } from "@/lib/theme/ThemeProvider";
 
 const NAV_LINKS = [
@@ -55,11 +55,8 @@ export function Navbar(): JSX.Element {
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Logo */}
-        <a href="#" className="flex items-center gap-2 text-text-headline font-serif text-xl font-normal">
-          <span className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center text-[#0F172A] font-bold text-sm">
-            C
-          </span>
-          Certiq
+        <a href="#" aria-label="Certiq home" className="focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 rounded">
+          <Logo size={32} />
         </a>
 
         {/* Center links — desktop */}

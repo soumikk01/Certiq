@@ -22,9 +22,9 @@ export function TestimonialsSection(): JSX.Element {
   return (
     <SectionWrapper
       id="testimonials"
-      eyebrow="Testimonials"
-      heading="Loved by professionals."
-      description="See what our users have to say about their experience with Certiq."
+      eyebrow="Notes from users"
+      heading="The résumés that got the call."
+      description="A sample of the engineers, designers, and operators who stopped tweaking and started interviewing."
     >
       <motion.div
         ref={ref}

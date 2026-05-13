@@ -9,36 +9,42 @@ export const FAQ_ITEMS: readonly FaqItem[] = [
     id: "templates",
     question: "How many resume templates are available?",
     answer:
-      "Certiq offers six professionally designed templates — Executive, Minimal, Developer, Student, Creative, and ATS Professional — each crafted for different industries and career stages. All templates are fully customizable and optimized for both visual appeal and ATS compatibility.",
+      "Six, and we're unapologetic about keeping the number small. Each template is the result of weeks of iteration with recruiters and typographers — not a clone with a different accent color. You can mix any of them across sections; the underlying grid is consistent.",
   },
   {
     id: "ats",
-    question: "How does ATS optimization work?",
+    question: "How does ATS optimization actually work?",
     answer:
-      "Our ATS engine scans your resume against common applicant tracking system parsers, scores keyword relevance, checks formatting compatibility, and provides actionable suggestions to improve your pass rate. You get a real-time score and a keyword match breakdown so you know exactly where to improve.",
+      "Certiq parses your resume through the same open-source libraries most applicant tracking systems rely on, scores the output against the job description you paste in, and flags every keyword you're missing. Then it shows you the exact sentence to change. No guessing.",
   },
   {
     id: "pricing",
-    question: "Is there a free plan available?",
+    question: "Is there really a free plan?",
     answer:
-      "Yes. The Free plan lets you create one resume with access to basic templates and standard PDF export. The Pro plan unlocks all templates, AI writing assistance, certificate storage, and priority support. The Team plan adds collaboration features and shared branding for organizations.",
+      "Yes. Free covers one resume, one template, and unlimited PDF exports — enough to land a job. Pro unlocks every template, the AI writing assistant, and certificate verification. Team adds shared libraries and admin controls for organizations.",
   },
   {
     id: "export",
-    question: "What export formats are supported?",
+    question: "What export formats do you support?",
     answer:
-      "Certiq supports one-click PDF export with pixel-perfect rendering that preserves your chosen template layout. Exported files are optimized for both digital sharing and print, ensuring consistent formatting across all devices and platforms.",
+      "PDF is the headline. Our rendering pipeline matches the on-screen layout pixel for pixel — no surprises when a recruiter prints it. We also emit a shareable public link that opens instantly in a browser with your analytics attached.",
   },
   {
     id: "certificates",
-    question: "How does certificate storage work?",
+    question: "How does certificate verification work?",
     answer:
-      "You can upload certificate images or paste credential links directly into Certiq. Certificates are stored securely and can be attached to any resume with a single click. Verified credentials display a badge that recruiters can validate instantly.",
+      "Drop a certificate image or paste a credential URL. Certiq stores it, attaches a verified badge to your resume, and shows a recruiter-facing proof page when they click through. No custom integrations required.",
   },
   {
     id: "ai-features",
-    question: "What can the AI writing assistant do?",
+    question: "Will the AI make everyone's resume sound the same?",
     answer:
-      "The AI assistant generates professional bullet points from brief descriptions, suggests stronger action verbs, tailors content to specific job postings, and rewrites sections to match industry conventions — all while preserving your authentic voice and experience.",
+      "No. The AI is tuned to amplify your voice, not replace it. It suggests stronger verbs, adds metrics where you've under-sold your impact, and rewrites for tone — but it never generates content from scratch. Your story, written tighter.",
+  },
+  {
+    id: "privacy",
+    question: "What happens to my data?",
+    answer:
+      "Your resume content never trains our models. Certificates are encrypted at rest. You can export or delete everything in one click. We work for you, not for data brokers.",
   },
 ] as const;

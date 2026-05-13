@@ -31,9 +31,22 @@ const sans = Inter({
  * - SSR default: data-theme="dark" (Requirement 22.8).
  */
 export const metadata: Metadata = {
-  title: "Certiq — Build resumes that feel premium.",
+  title: "Certiq — Resumes worth opening.",
   description:
-    "Certiq is a cinematic resume builder with premium templates, an AI-assisted editor, ATS scoring, and verifiable certificate storage.",
+    "Certiq is a cinematic resume builder with premium templates, AI-assisted editing, ATS scoring, and verifiable certificate storage. Built for professionals who want their first impression to matter.",
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
+  openGraph: {
+    title: "Certiq — Resumes worth opening.",
+    description:
+      "Cinematic resume builder with AI assistance, ATS scoring, and verifiable certificates.",
+    type: "website",
+  },
 };
 
 export const viewport: Viewport = {

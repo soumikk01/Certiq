@@ -30,8 +30,8 @@ export function PricingSection(): JSX.Element {
     <SectionWrapper
       id="pricing"
       eyebrow="Pricing"
-      heading="Simple, transparent pricing."
-      description="Start free. Upgrade when you're ready for the full experience."
+      heading="Pay for what matters. Not the gloss."
+      description="Start free. Upgrade when the features start doing the work for you."
     >
       <motion.div
         ref={ref}

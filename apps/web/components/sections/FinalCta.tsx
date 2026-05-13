@@ -14,7 +14,7 @@ import { useReducedMotionSafe, useInViewReveal, staggerContainer, EASE_PREMIUM }
 import { AccentGlow } from "@/components/effects/AccentGlow";
 import { ParticleField } from "@/components/effects/ParticleField";
 
-const HEADLINE = "Create your premium resume today.";
+const HEADLINE = "The resume you meant to write.";
 
 export function FinalCta(): JSX.Element {
   const ref = useRef<HTMLElement>(null);

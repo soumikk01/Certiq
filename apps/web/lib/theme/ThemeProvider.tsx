@@ -7,6 +7,10 @@
  * Applies transition-duration on theme-dependent properties (150–400 ms)
  * and sets it to 0 when `prefers-reduced-motion` is active.
  *
+ * The initial state is always "dark" (the SSR default) to avoid hydration
+ * mismatch. After mount, it syncs with the actual `data-theme` attribute
+ * which may have been set by the inline head script.
+ *
  * Requirements: 22.5, 22.6, 22.7
  */
 
@@ -31,18 +35,17 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-/**
- * Read the current data-theme attribute from the document.
- * Falls back to "dark" if unavailable.
- */
-function getDocumentTheme(): Theme {
-  if (typeof document === "undefined") return "dark";
-  const val = document.documentElement.dataset.theme;
-  return isTheme(val) ? val : "dark";
-}
-
 export function ThemeProvider({ children }: { children: ReactNode }): JSX.Element {
-  const [theme, setThemeState] = useState<Theme>(getDocumentTheme);
+  // Always start with "dark" to match SSR output and avoid hydration mismatch.
+  const [theme, setThemeState] = useState<Theme>("dark");
+
+  // After mount, sync with the actual DOM theme (set by the inline head script).
+  useEffect(() => {
+    const val = document.documentElement.dataset.theme;
+    if (isTheme(val) && val !== "dark") {
+      setThemeState(val);
+    }
+  }, []);
 
   const setTheme = useCallback((t: Theme) => {
     setThemeState(t);
@@ -51,8 +54,9 @@ export function ThemeProvider({ children }: { children: ReactNode }): JSX.Elemen
   }, []);
 
   const toggle = useCallback(() => {
-    setTheme(theme === "dark" ? "light" : "dark");
-  }, [theme, setTheme]);
+    const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+    setTheme(next);
+  }, [setTheme]);
 
   // Sync with external changes (e.g. other tabs via storage event)
   useEffect(() => {

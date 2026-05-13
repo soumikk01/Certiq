@@ -31,9 +31,9 @@ export function AtsSection(): JSX.Element {
   return (
     <SectionWrapper
       id="ats"
-      eyebrow="ATS Optimization"
-      heading="Beat the bots."
-      description="Get a real-time compatibility score and actionable suggestions to improve your pass rate."
+      eyebrow="ATS Intelligence"
+      heading="Past the robots. Into the room."
+      description="Certiq scores your resume against the same parsers recruiters use, surfaces missing keywords in plain English, and rewrites weak bullets on request."
     >
       <motion.div
         ref={ref}

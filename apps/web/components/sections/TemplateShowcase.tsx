@@ -28,8 +28,8 @@ export function TemplateShowcase(): JSX.Element {
     <SectionWrapper
       id="templates"
       eyebrow="Templates"
-      heading="Choose your style."
-      description="Six professionally designed templates crafted for different industries and career stages."
+      heading="Designed like magazines. Built for offers."
+      description="Six meticulously crafted layouts shaped by typography obsessives and hiring managers. Pick your voice; keep your content."
     >
       <motion.div
         ref={ref}
