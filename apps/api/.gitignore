@@ -1,0 +1,18 @@
+# Build output
+dist/
+build/
+
+# Incremental compilation
+*.tsbuildinfo
+.tsbuildinfo
+
+# Test & coverage
+coverage/
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.local
+.env.*.local

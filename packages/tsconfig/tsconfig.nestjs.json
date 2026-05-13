@@ -1,0 +1,24 @@
+{
+  "display": "Certiq NestJS",
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "removeComments": false,
+
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+
+    "outDir": "dist",
+    "incremental": true
+  },
+  "include": ["src/**/*.ts", "test/**/*.ts"],
+  "exclude": ["node_modules", "dist", "build", "coverage"]
+}

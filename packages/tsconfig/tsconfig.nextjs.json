@@ -1,0 +1,20 @@
+{
+  "display": "Certiq Next.js",
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+
+    "jsx": "preserve",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+
+    "allowJs": true,
+    "incremental": true,
+    "noEmit": true,
+
+    "plugins": [{ "name": "next" }]
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules", ".next", "dist", "build", "coverage"]
+}

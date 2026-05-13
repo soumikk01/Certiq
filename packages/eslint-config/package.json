@@ -1,0 +1,50 @@
+{
+  "name": "@certiq/eslint-config",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Shared ESLint flat configurations for the Certiq monorepo (base, next, nest).",
+  "type": "module",
+  "license": "UNLICENSED",
+  "exports": {
+    "./base": "./base.js",
+    "./next": "./next.js",
+    "./nest": "./nest.js"
+  },
+  "files": [
+    "base.js",
+    "next.js",
+    "nest.js",
+    "README.md"
+  ],
+  "peerDependencies": {
+    "eslint": "^9.10.0",
+    "@eslint/js": "^9.10.0",
+    "@eslint/eslintrc": "^3.1.0",
+    "@typescript-eslint/eslint-plugin": "^8.6.0",
+    "@typescript-eslint/parser": "^8.6.0",
+    "eslint-plugin-react": "^7.35.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-jsx-a11y": "^6.10.0",
+    "eslint-plugin-unused-imports": "^4.1.4",
+    "eslint-config-next": "^14.2.10",
+    "eslint-config-prettier": "^9.1.0",
+    "globals": "^15.9.0"
+  },
+  "peerDependenciesMeta": {
+    "@eslint/eslintrc": {
+      "optional": true
+    },
+    "eslint-config-next": {
+      "optional": true
+    },
+    "eslint-plugin-react": {
+      "optional": true
+    },
+    "eslint-plugin-react-hooks": {
+      "optional": true
+    },
+    "eslint-plugin-jsx-a11y": {
+      "optional": true
+    }
+  }
+}

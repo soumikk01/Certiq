@@ -1,0 +1,14 @@
+export { Navbar } from "./Navbar";
+export { HeroSection } from "./HeroSection";
+export { VideoHero } from "./VideoHero";
+export { TrustStrip } from "./TrustStrip";
+export { TemplateShowcase } from "./TemplateShowcase";
+export { BuilderDemo } from "./BuilderDemo";
+export { CertificateStorageSection } from "./CertificateStorageSection";
+export { AtsSection } from "./AtsSection";
+export { BentoGrid } from "./BentoGrid";
+export { TestimonialsSection } from "./TestimonialsSection";
+export { PricingSection } from "./PricingSection";
+export { FaqSection } from "./FaqSection";
+export { FinalCta } from "./FinalCta";
+export { Footer } from "./Footer";
