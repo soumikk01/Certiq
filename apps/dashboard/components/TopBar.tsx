@@ -1,5 +1,7 @@
 "use client";
 
+import { ThemeToggle } from "@certiq/ui";
+import { useDashboardTheme } from "@/lib/theme";
 import type { DashboardUser } from "@/lib/auth";
 
 interface TopBarProps {
@@ -8,6 +10,8 @@ interface TopBarProps {
 }
 
 export function TopBar({ user, onAvatarClick }: TopBarProps) {
+  const { theme, preference, cycle } = useDashboardTheme();
+
   const initials = user.name
     .split(" ")
     .map((p) => p.charAt(0))
@@ -55,6 +59,9 @@ export function TopBar({ user, onAvatarClick }: TopBarProps) {
 
       {/* Divider */}
       <div className="w-px h-6 bg-border-card mx-1" />
+
+      {/* Theme toggle */}
+      <ThemeToggle theme={theme} preference={preference} onToggle={cycle} className="w-8 h-8" />
 
       {/* Avatar — shows real user initials */}
       <button

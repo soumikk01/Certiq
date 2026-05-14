@@ -44,6 +44,8 @@ export function AuthProvider({ children }: { children: ReactNode }): JSX.Element
   useEffect(() => {
     async function loadUser() {
       try {
+        // The SDK auto-detects insforge_code in URL and exchanges it for tokens.
+        // getCurrentUser() waits for that exchange to complete.
         const { data } = await insforge.auth.getCurrentUser();
         if (data?.user) {
           setUser({
@@ -53,6 +55,16 @@ export function AuthProvider({ children }: { children: ReactNode }): JSX.Element
             avatarUrl: data.user.profile?.avatar_url ?? undefined,
             providers: data.user.providers ?? [],
           });
+
+          // If this was an OAuth callback, redirect to dashboard now
+          if (typeof window !== "undefined") {
+            const params = new URLSearchParams(window.location.search);
+            if (params.has("auth_callback") || params.has("insforge_code")) {
+              // Clean URL and redirect to dashboard
+              window.location.href = getDashboardUrl();
+              return;
+            }
+          }
         }
       } catch {
         // No session
@@ -64,18 +76,18 @@ export function AuthProvider({ children }: { children: ReactNode }): JSX.Element
   }, []);
 
   const signInWithGoogle = useCallback(async () => {
-    const dashboardUrl = getDashboardUrl();
+    // Redirect back to THIS origin for OAuth callback.
+    // After token exchange completes here, we redirect to dashboard.
     await insforge.auth.signInWithOAuth({
       provider: "google",
-      redirectTo: dashboardUrl,
+      redirectTo: window.location.origin + "/?auth_callback=1",
     });
   }, []);
 
   const signInWithLinkedIn = useCallback(async () => {
-    const dashboardUrl = getDashboardUrl();
     await insforge.auth.signInWithOAuth({
       provider: "linkedin",
-      redirectTo: dashboardUrl,
+      redirectTo: window.location.origin + "/?auth_callback=1",
     });
   }, []);
 

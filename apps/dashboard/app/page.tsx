@@ -1,17 +1,18 @@
 "use client";
 
 import { DashboardAuthProvider } from "@/lib/auth";
+import { DashboardThemeProvider } from "@/lib/theme";
 import { DashboardContent } from "@/components/DashboardContent";
 
 /**
- * Dashboard page — wraps content with auth provider.
- * The auth provider handles session validation and redirects
- * unauthenticated users back to the landing page.
+ * Dashboard page — wraps content with auth and theme providers.
  */
 export default function DashboardPage() {
   return (
-    <DashboardAuthProvider>
-      <DashboardContent />
-    </DashboardAuthProvider>
+    <DashboardThemeProvider>
+      <DashboardAuthProvider>
+        <DashboardContent />
+      </DashboardAuthProvider>
+    </DashboardThemeProvider>
   );
 }
