@@ -4,7 +4,6 @@ export interface CertificateMock {
   issuer: string;
   verified: boolean;
   tiltDeg: number;
-  thumbnail: string;
 }
 
 export const CERTIFICATES: readonly CertificateMock[] = [
@@ -14,7 +13,6 @@ export const CERTIFICATES: readonly CertificateMock[] = [
     issuer: "Amazon Web Services",
     verified: true,
     tiltDeg: -2,
-    thumbnail: "/images/certificates/aws-sa.webp",
   },
   {
     id: "cert-gcp",
@@ -22,7 +20,6 @@ export const CERTIFICATES: readonly CertificateMock[] = [
     issuer: "Google Cloud",
     verified: false,
     tiltDeg: 1.5,
-    thumbnail: "/images/certificates/gcp-pro.webp",
   },
   {
     id: "cert-k8s",
@@ -30,7 +27,6 @@ export const CERTIFICATES: readonly CertificateMock[] = [
     issuer: "Cloud Native Computing Foundation",
     verified: true,
     tiltDeg: 3,
-    thumbnail: "/images/certificates/cka.webp",
   },
   {
     id: "cert-azure",
@@ -38,6 +34,5 @@ export const CERTIFICATES: readonly CertificateMock[] = [
     issuer: "Microsoft",
     verified: false,
     tiltDeg: -1,
-    thumbnail: "/images/certificates/azure-dev.webp",
   },
 ] as const;

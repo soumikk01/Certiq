@@ -64,16 +64,18 @@ export function AuthProvider({ children }: { children: ReactNode }): JSX.Element
   }, []);
 
   const signInWithGoogle = useCallback(async () => {
+    const dashboardUrl = getDashboardUrl();
     await insforge.auth.signInWithOAuth({
       provider: "google",
-      redirectTo: window.location.origin,
+      redirectTo: dashboardUrl,
     });
   }, []);
 
   const signInWithLinkedIn = useCallback(async () => {
+    const dashboardUrl = getDashboardUrl();
     await insforge.auth.signInWithOAuth({
       provider: "linkedin",
-      redirectTo: window.location.origin,
+      redirectTo: dashboardUrl,
     });
   }, []);
 
@@ -90,6 +92,8 @@ export function AuthProvider({ children }: { children: ReactNode }): JSX.Element
         avatarUrl: data.user.profile?.avatar_url ?? undefined,
         providers: data.user.providers ?? [],
       });
+      // Redirect to dashboard after successful email login
+      window.location.href = getDashboardUrl();
     }
     return {};
   }, []);
@@ -136,4 +140,12 @@ export function useAuth(): AuthContextValue {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuth must be used within AuthProvider");
   return ctx;
+}
+
+/** Get the dashboard URL (same host, port 12001 in dev) */
+function getDashboardUrl(): string {
+  if (typeof window === "undefined") return "http://localhost:12001";
+  const origin = window.location.origin;
+  // In dev, landing is on :12000, dashboard is on :12001
+  return origin.replace(":12000", ":12001");
 }

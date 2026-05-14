@@ -1,0 +1,86 @@
+"use client";
+
+import { motion, AnimatePresence } from "framer-motion";
+import { type DashboardUser, useDashboardAuth } from "@/lib/auth";
+
+interface ProfileDropdownProps {
+  user: DashboardUser;
+  open: boolean;
+  onClose: () => void;
+}
+
+export function ProfileDropdown({ user, open, onClose }: ProfileDropdownProps) {
+  const { signOut } = useDashboardAuth();
+
+  const initials = user.name
+    .split(" ")
+    .map((p) => p.charAt(0))
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <>
+          {/* Invisible backdrop to close */}
+          <div className="fixed inset-0 z-40" onClick={onClose} />
+
+          {/* Dropdown card */}
+          <motion.div
+            className="fixed top-14 right-4 z-50 w-72 rounded-xl border border-border-card bg-bg-1 shadow-[0_16px_48px_rgba(0,0,0,0.4)] overflow-hidden"
+            initial={{ opacity: 0, y: -8, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.95 }}
+            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {/* Header — real user data */}
+            <div className="px-5 py-4 border-b border-border-card flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-accent/20 border border-accent/30 flex items-center justify-center text-accent font-sans font-bold text-sm">
+                {initials}
+              </div>
+              <div className="min-w-0">
+                <p className="text-text-headline font-sans text-sm font-medium truncate">
+                  {user.name}
+                </p>
+                <p className="text-text-muted font-sans text-xs truncate">
+                  {user.email}
+                </p>
+              </div>
+            </div>
+
+            {/* Menu items */}
+            <div className="py-2">
+              <button type="button" className="w-full px-5 py-2.5 text-left text-text-body text-sm font-sans hover:bg-surface-card-1 hover:text-text-headline transition-colors flex items-center gap-3">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>
+                Certiq settings
+              </button>
+              <button type="button" className="w-full px-5 py-2.5 text-left text-text-body text-sm font-sans hover:bg-surface-card-1 hover:text-text-headline transition-colors flex items-center gap-3">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+                Manage account
+              </button>
+
+              <div className="my-2 mx-4 h-px bg-border-card" />
+
+              {/* Sign out — functional */}
+              <button
+                type="button"
+                onClick={signOut}
+                className="w-full px-5 py-2.5 text-left text-red-400 text-sm font-sans hover:bg-red-500/10 transition-colors flex items-center gap-3"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>
+                Sign out
+              </button>
+            </div>
+
+            {/* Footer links */}
+            <div className="px-5 py-3 border-t border-border-card flex items-center gap-4">
+              <a href="#" className="text-text-muted text-xs font-sans hover:text-text-headline transition-colors">Terms and privacy</a>
+              <a href="#" className="text-text-muted text-xs font-sans hover:text-text-headline transition-colors">Third-party notices</a>
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}
