@@ -3,12 +3,13 @@
 /**
  * AuthProvider for the Certiq Dashboard.
  *
- * Handles:
- * - Session restoration on mount via insforge.auth.getCurrentUser()
- *   (the SDK automatically handles PKCE OAuth callback detection from URL params)
- * - User state management
- * - Sign out with redirect to landing page
- * - Loading state while session is being resolved
+ * Auth flow:
+ * 1. User logs in on landing page (port 12000) via InsForge OAuth
+ * 2. OAuth callback returns to landing page, SDK exchanges code for tokens
+ * 3. InsForge sets httpOnly refresh cookie (shared across localhost ports)
+ * 4. Landing page redirects to dashboard (port 12001)
+ * 5. Dashboard calls getCurrentUser() → if no memory token, tries refreshSession()
+ *    using the shared httpOnly cookie to get a fresh access token
  */
 
 import {
@@ -43,12 +44,27 @@ export function DashboardAuthProvider({ children }: { children: ReactNode }): JS
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let cancelled = false;
+
     async function initSession() {
       try {
-        // The InsForge SDK automatically detects OAuth PKCE callback params
-        // (insforge_code in URL) and exchanges them for a session.
-        // getCurrentUser() waits for that exchange to complete.
-        const { data, error } = await insforge.auth.getCurrentUser();
+        // First try: getCurrentUser() — works if SDK has tokens in memory
+        // or if there's an insforge_code in the URL to exchange
+        let { data, error } = await insforge.auth.getCurrentUser();
+
+        if (!data?.user) {
+          // No user from getCurrentUser — try refreshing the session.
+          // The httpOnly refresh cookie is shared across localhost ports,
+          // so refreshSession() can obtain a new access token.
+          const refreshResult = await insforge.auth.refreshSession();
+          if (refreshResult.data) {
+            // Refresh succeeded — now getCurrentUser should work
+            const retryResult = await insforge.auth.getCurrentUser();
+            data = retryResult.data;
+          }
+        }
+
+        if (cancelled) return;
 
         if (data?.user) {
           const u = data.user;
@@ -60,23 +76,35 @@ export function DashboardAuthProvider({ children }: { children: ReactNode }): JS
             providers: u.providers ?? [],
           });
 
-          // Clean URL params after successful auth callback
-          if (typeof window !== "undefined" && window.location.search.includes("insforge_code")) {
+          // Clean URL params if present
+          if (window.location.search.includes("insforge_code")) {
             window.history.replaceState(null, "", window.location.pathname);
           }
         } else {
-          // No session — redirect to landing page login
-          window.location.href = getLandingUrl();
+          // No session at all — redirect to landing page to log in
+          if (!cancelled) {
+            window.location.href = getLandingUrl();
+          }
+          return;
         }
       } catch {
-        // Auth failed — redirect to landing
-        window.location.href = getLandingUrl();
+        // Auth completely failed — redirect to landing
+        if (!cancelled) {
+          window.location.href = getLandingUrl();
+        }
+        return;
       } finally {
-        setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     }
 
     initSession();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const signOut = useCallback(async () => {
@@ -107,6 +135,5 @@ export function useDashboardAuth(): DashboardAuthContextValue {
 function getLandingUrl(): string {
   if (typeof window === "undefined") return "http://localhost:12000";
   const origin = window.location.origin;
-  // In dev, dashboard is on :12001, landing is on :12000
   return origin.replace(":12001", ":12000");
 }

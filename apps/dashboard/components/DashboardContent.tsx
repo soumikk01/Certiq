@@ -1,58 +1,68 @@
 "use client";
 
 /**
- * DashboardContent — main dashboard shell that reads auth state.
- * Shows a loading screen while session is being resolved,
- * then renders the full dashboard with real user data.
+ * DashboardContent — cinematic AI workspace layout.
+ *
+ * Structure: floating glass sidebar + main AI workspace canvas.
+ * No traditional navbar. Utility icons float in top-right.
+ * Inspired by Stitch, Linear, Arc Browser.
  */
 
 import { useState } from "react";
 import { useDashboardAuth } from "@/lib/auth";
-import { Sidebar } from "@/components/Sidebar";
-import { TopBar } from "@/components/TopBar";
-import { WelcomeArea } from "@/components/WelcomeArea";
+import { FloatingSidebar } from "@/components/FloatingSidebar";
+import { AIWorkspace } from "@/components/AIWorkspace";
+import { UtilityBar } from "@/components/UtilityBar";
 import { ProfileDropdown } from "@/components/ProfileDropdown";
+import { LoadingScreen } from "@/components/LoadingScreen";
 
 export function DashboardContent() {
   const { user, loading } = useDashboardAuth();
   const [profileOpen, setProfileOpen] = useState(false);
 
   if (loading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 rounded-full border-2 border-accent border-t-transparent animate-spin" />
-          <p className="text-text-muted font-sans text-sm">Loading your workspace...</p>
-        </div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
-  if (!user) {
-    // This shouldn't render — auth provider redirects if no user
-    return null;
-  }
+  if (!user) return null;
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      {/* Left Sidebar */}
-      <Sidebar />
+    <div className="relative h-screen w-screen overflow-hidden p-3 flex gap-3">
+      {/* Cinematic background */}
+      <div
+        aria-hidden="true"
+        className="fixed inset-0 -z-10"
+        style={{
+          background: "radial-gradient(ellipse 80% 50% at 50% 0%, rgba(30,41,59,0.5) 0%, rgb(var(--bg-1)) 70%)",
+        }}
+      />
 
-      {/* Main content area */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top bar with real user data */}
-        <TopBar
+      {/* Subtle grid texture */}
+      <div
+        aria-hidden="true"
+        className="fixed inset-0 -z-10 opacity-[0.03]"
+        style={{
+          backgroundImage: "linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)",
+          backgroundSize: "48px 48px",
+        }}
+      />
+
+      {/* Floating sidebar */}
+      <FloatingSidebar />
+
+      {/* Main workspace */}
+      <div className="flex-1 flex flex-col min-w-0 relative">
+        {/* Floating utility icons — top right */}
+        <UtilityBar
           user={user}
           onAvatarClick={() => setProfileOpen(!profileOpen)}
         />
 
-        {/* Center workspace */}
-        <main className="flex-1 overflow-y-auto px-8 py-10">
-          <WelcomeArea userName={user.name} />
-        </main>
+        {/* AI workspace canvas */}
+        <AIWorkspace userName={user.name} />
       </div>
 
-      {/* Profile dropdown with real user data */}
+      {/* Profile dropdown */}
       <ProfileDropdown
         user={user}
         open={profileOpen}

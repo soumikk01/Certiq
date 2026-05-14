@@ -24,7 +24,7 @@ const NAV_LINKS = [
 ] as const;
 
 export function Navbar(): JSX.Element {
-  const { theme, toggle } = useTheme();
+  const { theme, preference, cycle } = useTheme();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeLink, setActiveLink] = useState("#hero");
@@ -118,7 +118,7 @@ export function Navbar(): JSX.Element {
           </button>
 
           {/* Theme toggle */}
-          <ThemeToggle theme={theme} onToggle={toggle} />
+          <ThemeToggle theme={theme} preference={preference} onToggle={cycle} />
         </div>
 
         {/* Mobile menu button */}
@@ -175,7 +175,7 @@ export function Navbar(): JSX.Element {
             >
               Get Started
             </button>
-            <ThemeToggle theme={theme} onToggle={toggle} />
+            <ThemeToggle theme={theme} preference={preference} onToggle={cycle} />
           </div>
         </div>
       )}

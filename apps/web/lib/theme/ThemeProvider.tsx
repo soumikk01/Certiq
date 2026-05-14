@@ -1,17 +1,15 @@
 "use client";
 
 /**
- * ThemeProvider — React context for the Certiq two-theme system.
+ * ThemeProvider — React context for the Certiq theme system.
  *
- * Provides `useTheme()` hook with `theme`, `setTheme`, and `toggle`.
- * Applies transition-duration on theme-dependent properties (150–400 ms)
- * and sets it to 0 when `prefers-reduced-motion` is active.
+ * Supports three modes:
+ *   - "dark": always dark theme
+ *   - "light": always light theme
+ *   - "system": follows OS prefers-color-scheme (auto-updates on change)
  *
- * The initial state is always "dark" (the SSR default) to avoid hydration
- * mismatch. After mount, it syncs with the actual `data-theme` attribute
- * which may have been set by the inline head script.
- *
- * Requirements: 22.5, 22.6, 22.7
+ * The applied theme on the DOM is always "dark" or "light".
+ * The preference (stored in localStorage) can be "dark", "light", or "system".
  */
 
 import {
@@ -24,63 +22,118 @@ import {
   type ReactNode,
 } from "react";
 
-import { type Theme, THEME_STORAGE_KEY, isTheme } from "./types";
-import { persistTheme } from "./resolve";
+import { type Theme, type ThemePreference, THEME_STORAGE_KEY, isTheme, isThemePreference } from "./types";
+import { resolveTheme, persistTheme, readPersistedPreference } from "./resolve";
 
 interface ThemeContextValue {
+  /** The currently applied theme ("dark" or "light") */
   theme: Theme;
-  setTheme: (t: Theme) => void;
+  /** The user's preference ("dark", "light", or "system") */
+  preference: ThemePreference;
+  /** Set a specific preference */
+  setPreference: (p: ThemePreference) => void;
+  /** Cycle through: dark → light → system → dark */
+  cycle: () => void;
+  /** Legacy toggle (dark ↔ light, ignores system) */
   toggle: () => void;
 }
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-export function ThemeProvider({ children }: { children: ReactNode }): JSX.Element {
-  // Always start with "dark" to match SSR output and avoid hydration mismatch.
-  const [theme, setThemeState] = useState<Theme>("dark");
+/** Get the OS color scheme preference */
+function getSystemPrefersDark(): boolean {
+  if (typeof window === "undefined") return true;
+  return window.matchMedia("(prefers-color-scheme: dark)").matches;
+}
 
-  // After mount, sync with the actual DOM theme (set by the inline head script).
+export function ThemeProvider({ children }: { children: ReactNode }): JSX.Element {
+  // Start with "dark" to match SSR output and avoid hydration mismatch.
+  const [preference, setPreferenceState] = useState<ThemePreference>("dark");
+  const [systemDark, setSystemDark] = useState(true);
+
+  // After mount, sync with actual state
   useEffect(() => {
-    const val = document.documentElement.dataset.theme;
-    if (isTheme(val) && val !== "dark") {
-      setThemeState(val);
+    const stored = readPersistedPreference();
+    const osDark = getSystemPrefersDark();
+    setSystemDark(osDark);
+
+    if (stored) {
+      setPreferenceState(stored);
+      const applied = resolveTheme(stored, osDark);
+      document.documentElement.dataset.theme = applied;
+    } else {
+      // No stored preference — check what the head script set
+      const current = document.documentElement.dataset.theme;
+      if (isTheme(current)) {
+        setPreferenceState(current);
+      }
     }
   }, []);
 
-  const setTheme = useCallback((t: Theme) => {
-    setThemeState(t);
-    document.documentElement.dataset.theme = t;
-    persistTheme(t);
+  // Listen for OS color scheme changes (for "system" mode)
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+
+    function onChange(e: MediaQueryListEvent) {
+      setSystemDark(e.matches);
+      // If preference is "system", update the applied theme
+      const stored = readPersistedPreference();
+      if (stored === "system" || (!stored && preference === "system")) {
+        const applied = e.matches ? "dark" : "light";
+        document.documentElement.dataset.theme = applied;
+      }
+    }
+
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, [preference]);
+
+  // Compute the applied theme
+  const theme: Theme = resolveTheme(preference, systemDark);
+
+  const setPreference = useCallback((p: ThemePreference) => {
+    setPreferenceState(p);
+    persistTheme(p);
+    const osDark = getSystemPrefersDark();
+    const applied = resolveTheme(p, osDark);
+    document.documentElement.dataset.theme = applied;
   }, []);
 
-  const toggle = useCallback(() => {
-    const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
-    setTheme(next);
-  }, [setTheme]);
+  const cycle = useCallback(() => {
+    const order: ThemePreference[] = ["dark", "light", "system"];
+    const currentIdx = order.indexOf(preference);
+    const next = order[(currentIdx + 1) % order.length]!;
+    setPreference(next);
+  }, [preference, setPreference]);
 
-  // Sync with external changes (e.g. other tabs via storage event)
+  const toggle = useCallback(() => {
+    const next: Theme = theme === "dark" ? "light" : "dark";
+    setPreference(next);
+  }, [theme, setPreference]);
+
+  // Sync with external changes (other tabs)
   useEffect(() => {
     function onStorage(e: StorageEvent) {
-      if (e.key === THEME_STORAGE_KEY && isTheme(e.newValue)) {
-        setThemeState(e.newValue);
-        document.documentElement.dataset.theme = e.newValue;
+      if (e.key === THEME_STORAGE_KEY && isThemePreference(e.newValue)) {
+        setPreferenceState(e.newValue);
+        const applied = resolveTheme(e.newValue, getSystemPrefersDark());
+        document.documentElement.dataset.theme = applied;
       }
     }
     window.addEventListener("storage", onStorage);
     return () => window.removeEventListener("storage", onStorage);
   }, []);
 
-  // Apply transition class for smooth theme switching
+  // Apply transition duration for smooth theme switching
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     const html = document.documentElement;
 
     function applyTransition() {
-      if (mq.matches) {
-        html.style.setProperty("--theme-transition-duration", "0ms");
-      } else {
-        html.style.setProperty("--theme-transition-duration", "200ms");
-      }
+      html.style.setProperty(
+        "--theme-transition-duration",
+        mq.matches ? "0ms" : "200ms",
+      );
     }
 
     applyTransition();
@@ -88,13 +141,16 @@ export function ThemeProvider({ children }: { children: ReactNode }): JSX.Elemen
     return () => mq.removeEventListener("change", applyTransition);
   }, []);
 
-  const value = useMemo(() => ({ theme, setTheme, toggle }), [theme, setTheme, toggle]);
+  const value = useMemo(
+    () => ({ theme, preference, setPreference, cycle, toggle }),
+    [theme, preference, setPreference, cycle, toggle],
+  );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
 
 /**
- * Access the current theme, setTheme, and toggle functions.
+ * Access the theme context.
  * Must be used within a ThemeProvider.
  */
 export function useTheme(): ThemeContextValue {
