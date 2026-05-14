@@ -11,6 +11,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Logo } from "@certiq/ui";
+import { ExpandableNav } from "@/components/ExpandableNav";
 
 const RECENT_PROJECTS = [
   { id: "1", title: "Senior Engineer Resume", date: "May 12", icon: "resume", active: true },
@@ -123,18 +124,9 @@ export function FloatingSidebar() {
         </div>
       </div>
 
-      {/* Bottom: New resume button */}
-      <div className="px-3 pb-4 pt-2">
-        <button
-          type="button"
-          className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-accent/10 border border-accent/20 text-accent text-[11px] font-sans font-medium hover:bg-accent/15 hover:border-accent/30 transition-all"
-        >
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-            <line x1="12" y1="5" x2="12" y2="19" />
-            <line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
-          New Resume
-        </button>
+      {/* Bottom: Expandable navigation */}
+      <div className="px-2 pb-3 pt-2">
+        <ExpandableNav />
       </div>
     </aside>
   );
