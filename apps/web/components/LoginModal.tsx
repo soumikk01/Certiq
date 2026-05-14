@@ -13,6 +13,7 @@ import { useEffect, useCallback, useState } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Logo } from "@certiq/ui";
+import { useAuth } from "@/lib/auth/AuthProvider";
 
 export interface LoginModalProps {
   open: boolean;
@@ -21,6 +22,7 @@ export interface LoginModalProps {
 
 export function LoginModal({ open, onClose }: LoginModalProps): JSX.Element | null {
   const [mounted, setMounted] = useState(false);
+  const { signInWithGoogle, signInWithLinkedIn } = useAuth();
 
   useEffect(() => {
     setMounted(true);
@@ -129,6 +131,7 @@ export function LoginModal({ open, onClose }: LoginModalProps): JSX.Element | nu
             {/* Google button — primary dark pill */}
             <motion.button
               type="button"
+              onClick={() => signInWithGoogle()}
               className="w-full flex items-center justify-center gap-3 rounded-full bg-text-headline text-bg-1 font-sans font-medium text-sm min-h-[50px] px-5 py-3 hover:opacity-90 transition-opacity focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -158,6 +161,7 @@ export function LoginModal({ open, onClose }: LoginModalProps): JSX.Element | nu
             {/* LinkedIn button */}
             <motion.button
               type="button"
+              onClick={() => signInWithLinkedIn()}
               className="w-full flex items-center justify-center gap-3 rounded-full border border-border-card bg-surface-card-1 text-text-headline font-sans font-medium text-sm min-h-[50px] px-5 py-3 hover:bg-surface-card-2 hover:border-accent/20 transition-colors focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 mb-3"
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}

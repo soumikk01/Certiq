@@ -4,7 +4,6 @@ export interface Testimonial {
   name: string;
   profession: string;
   company: string;
-  avatarUrl?: string;
 }
 
 export const TESTIMONIALS: readonly Testimonial[] = [
@@ -15,7 +14,6 @@ export const TESTIMONIALS: readonly Testimonial[] = [
     name: "Sarah Chen",
     profession: "Senior Software Engineer",
     company: "Stripe",
-    avatarUrl: "/images/avatars/sarah-chen.jpg",
   },
   {
     id: "testimonial-2",
@@ -32,7 +30,6 @@ export const TESTIMONIALS: readonly Testimonial[] = [
     name: "Elena Rodriguez",
     profession: "Lead Product Designer",
     company: "Figma",
-    avatarUrl: "/images/avatars/elena-rodriguez.jpg",
   },
   {
     id: "testimonial-4",
@@ -49,7 +46,6 @@ export const TESTIMONIALS: readonly Testimonial[] = [
     name: "Amara Okafor",
     profession: "Data Scientist",
     company: "Anthropic",
-    avatarUrl: "/images/avatars/amara-okafor.jpg",
   },
   {
     id: "testimonial-6",
@@ -66,7 +62,6 @@ export const TESTIMONIALS: readonly Testimonial[] = [
     name: "Priya Sharma",
     profession: "Marketing Director",
     company: "Vercel",
-    avatarUrl: "/images/avatars/priya-sharma.jpg",
   },
   {
     id: "testimonial-8",

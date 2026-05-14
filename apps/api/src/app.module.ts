@@ -1,19 +1,22 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { PrismaModule } from './prisma/prisma.module';
+import { AuthModule } from './auth/auth.module';
 import { HealthModule } from './health/health.module';
+import { UsersModule } from './users/users.module';
+import { ResumesModule } from './resumes/resumes.module';
+import { CertificatesModule } from './certificates/certificates.module';
 
-/**
- * Root application module.
- *
- * Intentionally minimal for the landing-page scope. The only wired
- * feature module is `HealthModule`, which exposes `GET /health` to
- * prove the monorepo builds and boots end-to-end (Requirement 21.5).
- */
 @Module({
-  imports: [HealthModule],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    PrismaModule,
+    AuthModule,
+    HealthModule,
+    UsersModule,
+    ResumesModule,
+    CertificatesModule,
+  ],
 })
 export class AppModule {}

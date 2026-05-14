@@ -1,6 +1,5 @@
 export { Navbar } from "./Navbar";
 export { HeroSection } from "./HeroSection";
-export { VideoHero } from "./VideoHero";
 export { TrustStrip } from "./TrustStrip";
 export { TemplateShowcase } from "./TemplateShowcase";
 export { BuilderDemo } from "./BuilderDemo";
