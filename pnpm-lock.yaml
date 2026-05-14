@@ -95,6 +95,52 @@ importers:
         specifier: 2.1.2
         version: 2.1.2(@types/node@20.16.10)(jsdom@25.0.1)(terser@5.47.1)
 
+  apps/dashboard:
+    dependencies:
+      '@certiq/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      '@insforge/sdk':
+        specifier: ^1.2.7
+        version: 1.2.7
+      framer-motion:
+        specifier: ^12.38.0
+        version: 12.38.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      next:
+        specifier: 14.2.18
+        version: 14.2.18(@babel/core@7.29.0)(@playwright/test@1.60.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react:
+        specifier: 18.3.1
+        version: 18.3.1
+      react-dom:
+        specifier: 18.3.1
+        version: 18.3.1(react@18.3.1)
+    devDependencies:
+      '@certiq/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
+      '@types/node':
+        specifier: 20.16.11
+        version: 20.16.11
+      '@types/react':
+        specifier: 18.3.11
+        version: 18.3.11
+      '@types/react-dom':
+        specifier: 18.3.1
+        version: 18.3.1
+      autoprefixer:
+        specifier: ^10.4.20
+        version: 10.5.0(postcss@8.5.14)
+      postcss:
+        specifier: ^8.4.47
+        version: 8.5.14
+      tailwindcss:
+        specifier: ^3.4.14
+        version: 3.4.19
+      typescript:
+        specifier: 5.6.2
+        version: 5.6.2
+
   apps/web:
     dependencies:
       '@certiq/ui':

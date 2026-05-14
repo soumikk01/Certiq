@@ -8,6 +8,6 @@ import { createClient } from "@insforge/sdk";
  * in your .env.local file.
  */
 export const insforge = createClient({
-  baseUrl: process.env.NEXT_PUBLIC_INSFORGE_URL ?? "https://9cajtuc8.ap-southeast.insforge.app",
+  baseUrl: process.env.NEXT_PUBLIC_INSFORGE_URL ?? "",
   anonKey: process.env.NEXT_PUBLIC_INSFORGE_ANON_KEY ?? "",
 });

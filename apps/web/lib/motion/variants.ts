@@ -3,8 +3,6 @@
  *
  * All decorative motion uses only `opacity` and `transform` (translate, scale).
  * Durations lie in [400, 1200] ms. Easing is a premium ease-out cubic-bezier.
- *
- * Requirements: 3.2, 3.3, 3.4, 3.9
  */
 
 import type { Variants } from "framer-motion";
@@ -19,16 +17,6 @@ export const fadeUp: Variants = {
     opacity: 1,
     y: 0,
     transition: { duration: 0.7, ease: EASE_PREMIUM },
-  },
-};
-
-/** Scale-in entrance: scale 0.96→1 with opacity 0→1. */
-export const scaleIn: Variants = {
-  hidden: { opacity: 0, scale: 0.96 },
-  show: {
-    opacity: 1,
-    scale: 1,
-    transition: { duration: 0.8, ease: EASE_PREMIUM },
   },
 };
 
@@ -50,32 +38,5 @@ export const staggerChild: Variants = {
     opacity: 1,
     y: 0,
     transition: { duration: 0.5, ease: EASE_PREMIUM },
-  },
-};
-
-/** Continuous float: y oscillates between -6 and 6 px, 6s period. */
-export const floatY: Variants = {
-  float: {
-    y: [0, -6, 0, 6, 0],
-    transition: {
-      duration: 6,
-      ease: "easeInOut",
-      repeat: Infinity,
-      repeatType: "loop",
-    },
-  },
-};
-
-/** Accordion height animation for expand/collapse. */
-export const accordionHeight: Variants = {
-  collapsed: {
-    height: 0,
-    opacity: 0,
-    transition: { duration: 0.4, ease: EASE_PREMIUM },
-  },
-  expanded: {
-    height: "auto",
-    opacity: 1,
-    transition: { duration: 0.4, ease: EASE_PREMIUM },
   },
 };

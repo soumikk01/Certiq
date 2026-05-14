@@ -3,7 +3,7 @@
 /**
  * Section 10 — TestimonialsSection
  *
- * ≥6 glass testimonial cards with staggered fade-in, marquee, avatar fallback.
+ * ≥6 glass testimonial cards with staggered fade-in, code-generated avatars.
  *
  * Requirements: 13.1–13.6
  */
@@ -12,7 +12,8 @@ import { useRef } from "react";
 import { motion } from "framer-motion";
 import { TESTIMONIALS } from "@/data/testimonials";
 import { useReducedMotionSafe, useInViewReveal, staggerContainer, staggerChild } from "@/lib/motion";
-import { SectionWrapper, GlassCard, Avatar } from "@certiq/ui";
+import { SectionWrapper, GlassCard } from "@certiq/ui";
+import { GeneratedAvatar } from "@/components/previews";
 
 export function TestimonialsSection(): JSX.Element {
   const ref = useRef<HTMLDivElement>(null);
@@ -36,13 +37,20 @@ export function TestimonialsSection(): JSX.Element {
         {TESTIMONIALS.slice(0, 6).map((testimonial) => (
           <motion.div key={testimonial.id} variants={staggerChild}>
             <GlassCard className="p-6 h-full flex flex-col">
+              {/* Star rating */}
+              <div className="flex gap-0.5 mb-3" aria-hidden="true">
+                {[...Array(5)].map((_, i) => (
+                  <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="rgb(var(--accent))" className="text-accent">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                  </svg>
+                ))}
+              </div>
+
               <blockquote className="text-text-body font-sans text-sm leading-relaxed flex-1">
                 &ldquo;{testimonial.quote}&rdquo;
               </blockquote>
               <div className="flex items-center gap-3 mt-4 pt-4 border-t border-border-card">
-                <Avatar
-                  src={testimonial.avatarUrl}
-                  alt={`${testimonial.name}'s avatar`}
+                <GeneratedAvatar
                   name={testimonial.name}
                   size={40}
                 />
