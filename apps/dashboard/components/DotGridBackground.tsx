@@ -2,11 +2,7 @@
 
 /**
  * DotGridBackground — interactive dot grid with cursor-follow glow.
- *
- * - Shows subtle gray dots always
- * - When cursor moves: dots near cursor glow green (accent)
- * - When cursor is NOT moving or leaves: NO glow effect visible
- * - Removes the ambient background glow blob — effect only on dots
+ * Uses CSS variables for theme-aware dot colors.
  */
 
 import { useEffect, useRef, useState } from "react";
@@ -22,7 +18,6 @@ export function DotGridBackground(): JSX.Element {
   const smoothX = useSpring(mouseX, { stiffness: 100, damping: 18, mass: 0.5 });
   const smoothY = useSpring(mouseY, { stiffness: 100, damping: 18, mass: 0.5 });
 
-  // Mask that reveals glowing dots only around cursor
   const maskImage = useMotionTemplate`radial-gradient(250px circle at ${smoothX}px ${smoothY}px, white, transparent)`;
 
   useEffect(() => {
@@ -56,11 +51,11 @@ export function DotGridBackground(): JSX.Element {
       className="fixed inset-0 -z-10 overflow-hidden pointer-events-none"
       aria-hidden="true"
     >
-      {/* Base dot grid — subtle gray, always visible */}
+      {/* Base dot grid — uses theme variable */}
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage: "radial-gradient(circle, rgba(148,163,184,0.13) 1px, transparent 1px)",
+          backgroundImage: "radial-gradient(circle, var(--dot-color) 1px, transparent 1px)",
           backgroundSize: "24px 24px",
         }}
       />
@@ -70,7 +65,7 @@ export function DotGridBackground(): JSX.Element {
         <motion.div
           className="absolute inset-0"
           style={{
-            backgroundImage: "radial-gradient(circle, rgba(217,255,63,0.7) 1.2px, transparent 1.2px)",
+            backgroundImage: "radial-gradient(circle, var(--dot-glow) 1.2px, transparent 1.2px)",
             backgroundSize: "24px 24px",
             maskImage,
             WebkitMaskImage: maskImage,

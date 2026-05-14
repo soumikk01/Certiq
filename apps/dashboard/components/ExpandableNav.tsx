@@ -52,7 +52,7 @@ const icons = {
 };
 
 const MenuItem = ({ icon, label }: { icon: React.ReactNode; label: string }) => (
-  <div className="flex h-9 cursor-pointer items-center justify-between gap-2 rounded-xl px-2.5 text-[11px] font-medium text-text-body hover:bg-white/[0.06] hover:text-text-headline transition-colors">
+  <div className="flex h-9 cursor-pointer items-center justify-between gap-2 rounded-xl px-2.5 text-[11px] font-medium text-text-body hover:bg-surface-card-2 hover:text-text-headline transition-colors">
     <span className="flex items-center gap-2">
       {icon}
       {label}
@@ -170,7 +170,7 @@ export function ExpandableNav() {
       )}
 
       <motion.div
-        className="relative rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.2)] overflow-hidden"
+        className="relative rounded-2xl border border-border-card bg-surface-card-1 backdrop-blur-md shadow-[var(--glass-shadow)] overflow-hidden"
         animate={{
           height: cardHeight,
           width: isExpanded ? CARD_W : COLLAPSED_W,
@@ -207,28 +207,30 @@ export function ExpandableNav() {
           </AnimatePresence>
         </div>
 
-        {/* Bottom nav tabs */}
+        {/* Bottom nav tabs — glass pill bar */}
         <div
-          className="absolute bottom-0 left-0 right-0 p-1.5 border-t border-white/[0.06]"
+          className="absolute bottom-0 left-0 right-0 p-1.5 border-t border-border-card"
           style={{ height: NAV_H }}
         >
-          <div className="flex h-full w-full items-center justify-center gap-0.5">
+          <div className="flex h-full w-full items-center justify-center gap-0.5 rounded-xl border border-border-card bg-surface-card-2 backdrop-blur-md px-1">
             {tabs.map((tab) => {
               const isActive = activeId === tab.id;
               return (
                 <motion.button
                   key={tab.id}
                   onClick={() => handleNavClick(tab.id)}
-                  className="relative flex h-full items-center justify-center rounded-xl text-[11px] font-semibold"
+                  className={`relative flex h-full items-center justify-center rounded-lg text-[11px] font-semibold transition-colors ${
+                    isActive
+                      ? "bg-bg-1 text-accent shadow-sm border border-border-card"
+                      : "text-text-muted hover:text-text-body"
+                  }`}
                   animate={{
                     paddingLeft: isActive ? "0.75rem" : "0.5rem",
                     paddingRight: isActive ? "0.75rem" : "0.5rem",
                     gap: isActive ? "0.375rem" : "0rem",
-                    backgroundColor: isActive ? "rgba(217,255,63,0.1)" : "rgba(0,0,0,0)",
-                    color: isActive ? "rgb(217,255,63)" : "rgb(148,163,184)",
                   }}
                   transition={EASE}
-                  whileHover={{ color: isActive ? "rgb(217,255,63)" : "rgb(203,213,225)" }}
+                  whileHover={{ opacity: 0.8 }}
                 >
                   {tab.icon}
                   <AnimatePresence initial={false}>
