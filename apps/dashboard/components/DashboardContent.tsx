@@ -2,7 +2,7 @@
 
 /**
  * DashboardContent — main dashboard shell that reads auth state.
- * Shows a loading screen while session is being resolved,
+ * Shows a premium logo-drawing animation while session is being resolved,
  * then renders the full dashboard with real user data.
  */
 
@@ -12,20 +12,14 @@ import { Sidebar } from "@/components/Sidebar";
 import { TopBar } from "@/components/TopBar";
 import { WelcomeArea } from "@/components/WelcomeArea";
 import { ProfileDropdown } from "@/components/ProfileDropdown";
+import { LoadingScreen } from "@/components/LoadingScreen";
 
 export function DashboardContent() {
   const { user, loading } = useDashboardAuth();
   const [profileOpen, setProfileOpen] = useState(false);
 
   if (loading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 rounded-full border-2 border-accent border-t-transparent animate-spin" />
-          <p className="text-text-muted font-sans text-sm">Loading your workspace...</p>
-        </div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   if (!user) {

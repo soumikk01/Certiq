@@ -20,6 +20,11 @@ const sans = Inter({
 export const metadata: Metadata = {
   title: "Certiq — Dashboard",
   description: "Your resume workspace",
+  icons: {
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
 };
 
 /** Inline script to set theme before first paint — prevents FOUC */
