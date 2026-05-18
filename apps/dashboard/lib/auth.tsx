@@ -3,13 +3,14 @@
 /**
  * AuthProvider for the Certiq Dashboard.
  *
- * Auth flow:
- * 1. User logs in on landing page (port 12000) via InsForge OAuth
- * 2. OAuth callback returns to landing page, SDK exchanges code for tokens
- * 3. InsForge sets httpOnly refresh cookie (shared across localhost ports)
- * 4. Landing page redirects to dashboard (port 12001)
- * 5. Dashboard calls getCurrentUser() → if no memory token, tries refreshSession()
- *    using the shared httpOnly cookie to get a fresh access token
+ * Flow:
+ * 1. User logs in on landing page → immediately redirected here
+ * 2. Dashboard shows the loading animation (logo drawing)
+ * 3. Meanwhile, tries to get the user session
+ * 4. If session found → show dashboard
+ * 5. If no session after retries → redirect to landing page
+ *
+ * The loading animation always plays fully (minimum 2.5s) for a premium feel.
  */
 
 import {
@@ -39,64 +40,78 @@ interface DashboardAuthContextValue {
 
 const DashboardAuthContext = createContext<DashboardAuthContextValue | null>(null);
 
+/** Minimum time to show loading animation (ms) */
+const MIN_LOADING_TIME = 2500;
+
 export function DashboardAuthProvider({ children }: { children: ReactNode }): JSX.Element {
   const [user, setUser] = useState<DashboardUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
+    const startTime = Date.now();
 
     async function initSession() {
+      let resolvedUser: DashboardUser | null = null;
+
       try {
-        // First try: getCurrentUser() — works if SDK has tokens in memory
-        // or if there's an insforge_code in the URL to exchange
-        let { data, error } = await insforge.auth.getCurrentUser();
+        // Try getCurrentUser — handles PKCE callback automatically
+        let { data } = await insforge.auth.getCurrentUser();
 
         if (!data?.user) {
-          // No user from getCurrentUser — try refreshing the session.
-          // The httpOnly refresh cookie is shared across localhost ports,
-          // so refreshSession() can obtain a new access token.
-          const refreshResult = await insforge.auth.refreshSession();
-          if (refreshResult.data) {
-            // Refresh succeeded — now getCurrentUser should work
-            const retryResult = await insforge.auth.getCurrentUser();
-            data = retryResult.data;
+          // Try refresh session (shared httpOnly cookie across ports)
+          try {
+            const refreshResult = await insforge.auth.refreshSession();
+            if (refreshResult.data) {
+              const retryResult = await insforge.auth.getCurrentUser();
+              data = retryResult.data;
+            }
+          } catch {
+            // Refresh failed — will try one more time after delay
           }
         }
 
-        if (cancelled) return;
+        // If still no user, wait a moment and try once more
+        // (gives time for cookie to propagate)
+        if (!data?.user) {
+          await new Promise((r) => setTimeout(r, 800));
+          const lastTry = await insforge.auth.getCurrentUser();
+          data = lastTry.data;
+        }
 
         if (data?.user) {
           const u = data.user;
-          setUser({
+          resolvedUser = {
             id: u.id,
             email: u.email,
             name: u.profile?.name ?? u.email.split("@")[0] ?? "User",
             avatarUrl: u.profile?.avatar_url ?? undefined,
             providers: u.providers ?? [],
-          });
+          };
 
-          // Clean URL params if present
+          // Clean URL params
           if (window.location.search.includes("insforge_code")) {
             window.history.replaceState(null, "", window.location.pathname);
           }
-        } else {
-          // No session at all — redirect to landing page to log in
-          if (!cancelled) {
-            window.location.href = getLandingUrl();
-          }
-          return;
         }
       } catch {
-        // Auth completely failed — redirect to landing
-        if (!cancelled) {
-          window.location.href = getLandingUrl();
-        }
-        return;
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
+        // Auth failed
+      }
+
+      // Ensure minimum loading time for the animation to complete
+      const elapsed = Date.now() - startTime;
+      if (elapsed < MIN_LOADING_TIME) {
+        await new Promise((r) => setTimeout(r, MIN_LOADING_TIME - elapsed));
+      }
+
+      if (cancelled) return;
+
+      if (resolvedUser) {
+        setUser(resolvedUser);
+        setLoading(false);
+      } else {
+        // No session — redirect to landing page
+        window.location.href = getLandingUrl();
       }
     }
 
