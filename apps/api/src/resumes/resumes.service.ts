@@ -1,51 +1,81 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model, Types } from 'mongoose';
+import { Resume, ResumeDocument } from '../database/schemas/resume.schema.js';
 
 @Injectable()
 export class ResumesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @InjectModel(Resume.name) private readonly resumeModel: Model<ResumeDocument>,
+  ) {}
 
-  async findAllByUser(userId: string) {
-    return this.prisma.resume.findMany({
-      where: { userId },
-      orderBy: { updatedAt: 'desc' },
+  async create(
+    userId: string,
+    data: { title?: string; templateId?: string; content?: Record<string, unknown> },
+  ) {
+    const resume = await this.resumeModel.create({
+      userId: new Types.ObjectId(userId),
+      title: data.title ?? 'Untitled Resume',
+      templateId: data.templateId ?? 'executive',
+      content: data.content ?? {},
     });
-  }
-
-  async findById(id: string, userId: string) {
-    const resume = await this.prisma.resume.findUnique({ where: { id } });
-    if (!resume) throw new NotFoundException('Resume not found');
-    if (resume.userId !== userId) throw new ForbiddenException();
     return resume;
   }
 
-  async create(userId: string, data: { title?: string; templateId?: string; content?: any }) {
-    return this.prisma.resume.create({
-      data: {
-        userId,
-        title: data.title ?? 'Untitled Resume',
-        templateId: data.templateId ?? 'executive',
-        content: data.content ?? {},
-      },
-    });
+  async findAll(userId: string) {
+    return this.resumeModel
+      .find({ userId: new Types.ObjectId(userId) })
+      .sort({ updatedAt: -1 })
+      .exec();
   }
 
-  async update(id: string, userId: string, data: { title?: string; templateId?: string; content?: any; published?: boolean }) {
-    const resume = await this.findById(id, userId);
-    return this.prisma.resume.update({
-      where: { id: resume.id },
-      data: {
-        ...(data.title !== undefined && { title: data.title }),
-        ...(data.templateId !== undefined && { templateId: data.templateId }),
-        ...(data.content !== undefined && { content: data.content }),
-        ...(data.published !== undefined && { published: data.published }),
-      },
-    });
+  async findOne(id: string, userId: string) {
+    const resume = await this.resumeModel
+      .findOne({ _id: new Types.ObjectId(id), userId: new Types.ObjectId(userId) })
+      .exec();
+
+    if (!resume) {
+      throw new NotFoundException('Resume not found');
+    }
+
+    return resume;
+  }
+
+  async update(
+    id: string,
+    userId: string,
+    data: { title?: string; templateId?: string; content?: Record<string, unknown>; published?: boolean },
+  ) {
+    const updateData: Record<string, unknown> = {};
+    if (data.title !== undefined) updateData.title = data.title;
+    if (data.templateId !== undefined) updateData.templateId = data.templateId;
+    if (data.content !== undefined) updateData.content = data.content;
+    if (data.published !== undefined) updateData.published = data.published;
+
+    const resume = await this.resumeModel
+      .findOneAndUpdate(
+        { _id: new Types.ObjectId(id), userId: new Types.ObjectId(userId) },
+        { $set: updateData },
+        { new: true },
+      )
+      .exec();
+
+    if (!resume) {
+      throw new NotFoundException('Resume not found');
+    }
+
+    return resume;
   }
 
   async delete(id: string, userId: string) {
-    const resume = await this.findById(id, userId);
-    await this.prisma.resume.delete({ where: { id: resume.id } });
+    const resume = await this.resumeModel
+      .findOneAndDelete({ _id: new Types.ObjectId(id), userId: new Types.ObjectId(userId) })
+      .exec();
+
+    if (!resume) {
+      throw new NotFoundException('Resume not found');
+    }
+
     return { deleted: true };
   }
 }

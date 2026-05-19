@@ -2,101 +2,41 @@
 @tailwind components;
 @tailwind utilities;
 
-/*
- * Certiq Landing Page — theme tokens
- *
- * Implements Requirement 1 (Global Design System) and Requirement 22 (Theme System)
- * via the Theme Delivery Pipeline described in design.md.
- *
- * Color tokens consumed through Tailwind (`rgb(var(--token) / <alpha-value>)`) are
- * declared as space-separated RGB triples so Tailwind can compose alpha at runtime.
- * Pre-composed values (card surfaces, borders, shadows, opacities) are used as-is
- * and therefore retain their full CSS color / value syntax.
- *
- * Task 5.2 adds the body noise overlay layer. Task 5.3 mirrors these tokens in
- * lib/tokens.ts. Task 5.4 binds them to Tailwind in tailwind.config.ts.
- */
-
 :root[data-theme="dark"] {
-  /* Background_Palette_Dark — #0F172A, #111827, #1E293B */
   --bg-1: 15 23 42;
   --bg-2: 17 24 39;
   --bg-3: 30 41 59;
-
-  /* Text tokens — Text_Headline #FFFFFF, Text_Body #CBD5E1, Text_Muted #94A3B8 */
   --text-headline: 255 255 255;
   --text-body: 203 213 225;
   --text-muted: 148 163 184;
-
-  /* Accent_Color #D9FF3F and alternate #C7FF00 (shared across themes) */
   --accent: 217 255 63;
   --accent-alt: 199 255 0;
-
-  /* Card_Surface — translucent white over dark palette */
   --surface-card-1: rgba(255, 255, 255, 0.06);
   --surface-card-2: rgba(255, 255, 255, 0.08);
-
-  /* Card_Border — dark-mode value */
   --border-card: rgba(255, 255, 255, 0.08);
-
-  /* Glass_Effect drop shadow (Requirement 1.8) */
   --shadow-glass: 0 16px 40px rgba(0, 0, 0, 0.4);
-
-  /* Noise/grid overlay opacity (Requirement 1.7, dark: 3%–8%) */
   --noise-opacity: 0.05;
-
-  /* Accent_Glow opacities (Requirement 1.10) */
   --glow-accent-hover: 0.45;
   --glow-accent-ambient: 0.15;
 }
 
 :root[data-theme="light"] {
-  /* Background_Palette_Light — #FFFFFF, #F8FAFC, #EEF2F7 */
   --bg-1: 255 255 255;
   --bg-2: 248 250 252;
   --bg-3: 238 242 247;
-
-  /* Text tokens — Text_Headline #111111, Text_Body #64748B, Text_Muted #94A3B8 */
   --text-headline: 17 17 17;
   --text-body: 100 116 139;
   --text-muted: 148 163 184;
-
-  /* Accent_Color constant across themes (Requirement 22.10) */
   --accent: 217 255 63;
   --accent-alt: 199 255 0;
-
-  /* Card_Surface — translucent white over light palette */
   --surface-card-1: rgba(255, 255, 255, 0.8);
   --surface-card-2: rgba(255, 255, 255, 0.88);
-
-  /* Card_Border — light-mode value */
   --border-card: rgba(15, 23, 42, 0.1);
-
-  /* Glass_Effect drop shadow (Requirement 1.8) */
   --shadow-glass: 0 16px 40px rgba(15, 23, 42, 0.1);
-
-  /* Noise/grid overlay opacity (Requirement 1.7, light: 2%–5%) */
   --noise-opacity: 0.035;
-
-  /* Accent_Glow opacities (Requirement 1.10) */
   --glow-accent-hover: 0.5;
   --glow-accent-ambient: 0.13;
 }
-
-/* ─────────────────────────────────────────────────────────────────────────────
- * Global Noise Overlay (Requirement 1.7)
- *
- * Full-viewport fixed noise texture using an inline SVG feTurbulence filter
- * encoded as a data URI. The overlay sits above all content visually but is
- * non-interactive (pointer-events: none). Opacity is driven by the theme token
- * --noise-opacity (dark: 0.05, light: 0.035) so it stays within the specified
- * ranges (dark 3–8%, light 2–5%) and never reduces text contrast below WCAG
- * thresholds.
- *
- * The SVG filter uses fractalNoise with a high baseFrequency and 4 octaves to
- * produce a fine-grained film-grain texture. Because the filter generates the
- * pattern procedurally at 100% viewport size, there are no tiling seams.
- * ───────────────────────────────────────────────────────────────────────────── */
 
 body::after {
   content: "";

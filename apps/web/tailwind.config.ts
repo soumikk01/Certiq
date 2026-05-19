@@ -1,18 +1,5 @@
 import type { Config } from "tailwindcss";
 
-/**
- * Tailwind configuration for the Certiq landing page.
- *
- * Design-token CSS variables (background, text, surface, border, accent) are
- * bound to Tailwind color names via `rgb(var(--token) / <alpha-value>)` for
- * RGB-triple tokens, and plain `var(--token)` for tokens that include alpha or
- * complex values (surface, border). Task 7.2 binds `--font-serif` / `--font-sans`
- * CSS variables to `theme.fontFamily`.
- *
- * `darkMode: ['attribute', '[data-theme="dark"]']` aligns Tailwind's `dark:`
- * variant with the `data-theme` attribute scheme driven by ThemeProvider
- * (Requirements 21.16, 22.8).
- */
 const config: Config = {
   content: [
     "./app/**/*.{ts,tsx}",

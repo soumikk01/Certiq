@@ -1,15 +1,12 @@
 "use client";
 
 /**
- * ParticleField — floating particles with count [6, 24] and opacity 10–40%.
- * Hidden under reduced motion.
- *
- * Requirements: 16.4, 16.7, 20.11
+ * ParticleField — floating particles rendered only on client.
+ * Completely avoids hydration mismatch by rendering nothing on server.
  */
 
-import { useMemo } from "react";
-import { motion } from "framer-motion";
-import { useReducedMotionSafe } from "@/lib/motion/hooks";
+import { useState, useEffect } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 
 export interface ParticleFieldProps {
   count?: number;
@@ -27,9 +24,14 @@ interface Particle {
 }
 
 export function ParticleField({ count = 12, className = "" }: ParticleFieldProps): JSX.Element | null {
-  const { hideParticles } = useReducedMotionSafe();
+  const reduced = useReducedMotion() ?? false;
+  const [particles, setParticles] = useState<Particle[]>([]);
+  const [mounted, setMounted] = useState(false);
 
-  const particles = useMemo(() => {
+  // Only generate and show particles after client mount
+  useEffect(() => {
+    setMounted(true);
+    if (reduced) return;
     const clamped = Math.max(6, Math.min(24, count));
     const result: Particle[] = [];
     for (let i = 0; i < clamped; i++) {
@@ -43,13 +45,14 @@ export function ParticleField({ count = 12, className = "" }: ParticleFieldProps
         delay: Math.random() * 3,
       });
     }
-    return result;
-  }, [count]);
+    setParticles(result);
+  }, [count, reduced]);
 
-  if (hideParticles) return null;
+  // Render nothing on server and during first render to match SSR output
+  if (!mounted || reduced || particles.length === 0) return null;
 
   return (
-    <div aria-hidden="true" className={`absolute inset-0 overflow-hidden pointer-events-none ${className}`}>
+    <div aria-hidden="true" className={`absolute inset-0 overflow-hidden pointer-events-none ${className}`} suppressHydrationWarning>
       {particles.map((p) => (
         <motion.div
           key={p.id}

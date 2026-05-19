@@ -1,13 +1,17 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import { SessionUser } from './auth.guard.js';
 
 /**
- * @CurrentUser() decorator — extracts the authenticated user from the request.
- * Must be used with AuthGuard.
+ * @Session() parameter decorator — extracts the authenticated user
+ * from the request context. Must be used with AuthGuard.
+ *
+ * Usage:
+ *   @Get('me')
+ *   getMe(@Session() user: SessionUser) { ... }
  */
-export const CurrentUser = createParamDecorator(
-  (data: string | undefined, ctx: ExecutionContext) => {
+export const Session = createParamDecorator(
+  (data: unknown, ctx: ExecutionContext): SessionUser => {
     const request = ctx.switchToHttp().getRequest();
-    const user = request.user;
-    return data ? user?.[data] : user;
+    return request.user;
   },
 );

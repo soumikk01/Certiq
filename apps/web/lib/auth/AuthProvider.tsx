@@ -1,163 +1,101 @@
 "use client";
 
-/**
- * AuthProvider — wraps InsForge auth SDK for the Certiq app.
- * Provides signIn (Google, LinkedIn, Email), signOut, and current user state.
- */
+import { createContext, useContext, useCallback, useState } from "react";
+import { authClient } from "@/lib/auth-client";
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
-import { insforge } from "@/lib/insforge";
-
-interface User {
+interface AuthUser {
   id: string;
   email: string;
-  name?: string | undefined;
-  avatarUrl?: string | undefined;
-  providers: string[];
+  name: string | null;
+  image: string | null;
 }
 
-interface AuthContextValue {
-  user: User | null;
+interface AuthContextType {
+  user: AuthUser | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
   signInWithLinkedIn: () => Promise<void>;
-  signInWithEmail: (email: string, password: string) => Promise<{ error?: string }>;
-  signUp: (email: string, password: string, name?: string) => Promise<{ error?: string; requireVerification?: boolean }>;
+  signInWithEmail: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string, name: string) => Promise<void>;
   signOut: () => Promise<void>;
+  error: string | null;
 }
 
-const AuthContext = createContext<AuthContextValue | null>(null);
+const AuthContext = createContext<AuthContextType | null>(null);
 
-export function AuthProvider({ children }: { children: ReactNode }): JSX.Element {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  // Check for existing session on mount
-  useEffect(() => {
-    async function loadUser() {
-      try {
-        // The SDK auto-detects insforge_code in URL and exchanges it for tokens.
-        // getCurrentUser() waits for that exchange to complete.
-        const { data } = await insforge.auth.getCurrentUser();
-        if (data?.user) {
-          setUser({
-            id: data.user.id,
-            email: data.user.email,
-            name: data.user.profile?.name ?? undefined,
-            avatarUrl: data.user.profile?.avatar_url ?? undefined,
-            providers: data.user.providers ?? [],
-          });
-
-          // If this was an OAuth callback, redirect to dashboard now
-          if (typeof window !== "undefined") {
-            const params = new URLSearchParams(window.location.search);
-            if (params.has("auth_callback") || params.has("insforge_code")) {
-              // Clean URL and redirect to dashboard
-              window.location.href = getDashboardUrl();
-              return;
-            }
-          }
-        }
-      } catch {
-        // No session
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadUser();
-  }, []);
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const { data: session, isPending } = authClient.useSession();
+  const [error, setError] = useState<string | null>(null);
 
   const signInWithGoogle = useCallback(async () => {
-    // Redirect back to THIS origin for OAuth callback.
-    // After token exchange completes here, we redirect to dashboard.
-    await insforge.auth.signInWithOAuth({
+    setError(null);
+    await authClient.signIn.social({
       provider: "google",
-      redirectTo: window.location.origin + "/?auth_callback=1",
+      callbackURL: "http://localhost:12001",
     });
   }, []);
 
   const signInWithLinkedIn = useCallback(async () => {
-    await insforge.auth.signInWithOAuth({
+    setError(null);
+    await authClient.signIn.social({
       provider: "linkedin",
-      redirectTo: window.location.origin + "/?auth_callback=1",
+      callbackURL: "http://localhost:12001",
     });
   }, []);
 
   const signInWithEmail = useCallback(async (email: string, password: string) => {
-    const { data, error } = await insforge.auth.signInWithPassword({ email, password });
-    if (error) {
-      return { error: error.message ?? "Sign in failed" };
+    setError(null);
+    const result = await authClient.signIn.email({ email, password });
+    if (result.error) {
+      setError(result.error.message || "Sign in failed");
+      return;
     }
-    if (data?.user) {
-      setUser({
-        id: data.user.id,
-        email: data.user.email,
-        name: data.user.profile?.name ?? undefined,
-        avatarUrl: data.user.profile?.avatar_url ?? undefined,
-        providers: data.user.providers ?? [],
-      });
-      // Redirect to dashboard after successful email login
-      window.location.href = getDashboardUrl();
-    }
-    return {};
+    window.location.href = "http://localhost:12001";
   }, []);
 
-  const signUp = useCallback(async (email: string, password: string, name?: string) => {
-    const { data, error } = await insforge.auth.signUp({
-      email,
-      password,
-      name,
-      redirectTo: window.location.origin,
-    });
-    if (error) {
-      return { error: error.message ?? "Sign up failed" };
+  const signUp = useCallback(async (email: string, password: string, name: string) => {
+    setError(null);
+    const result = await authClient.signUp.email({ email, password, name });
+    if (result.error) {
+      setError(result.error.message || "Sign up failed");
+      return;
     }
-    if (data?.requireEmailVerification) {
-      return { requireVerification: true };
-    }
-    if (data?.user) {
-      setUser({
-        id: data.user.id,
-        email: data.user.email,
-        name: data.user.profile?.name ?? undefined,
-        avatarUrl: data.user.profile?.avatar_url ?? undefined,
-        providers: data.user.providers ?? [],
-      });
-    }
-    return {};
+    window.location.href = "http://localhost:12001";
   }, []);
 
   const signOut = useCallback(async () => {
-    await insforge.auth.signOut();
-    setUser(null);
+    await authClient.signOut();
   }, []);
 
-  const value = useMemo(
-    () => ({ user, loading, signInWithGoogle, signInWithLinkedIn, signInWithEmail, signUp, signOut }),
-    [user, loading, signInWithGoogle, signInWithLinkedIn, signInWithEmail, signUp, signOut],
+  const user = session?.user
+    ? {
+        id: session.user.id,
+        email: session.user.email,
+        name: session.user.name,
+        image: session.user.image ?? null,
+      }
+    : null;
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        loading: isPending,
+        signInWithGoogle,
+        signInWithLinkedIn,
+        signInWithEmail,
+        signUp,
+        signOut,
+        error,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
   );
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-export function useAuth(): AuthContextValue {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
-  return ctx;
-}
-
-/** Get the dashboard URL (same host, port 12001 in dev) */
-function getDashboardUrl(): string {
-  if (typeof window === "undefined") return "http://localhost:12001";
-  const origin = window.location.origin;
-  // In dev, landing is on :12000, dashboard is on :12001
-  return origin.replace(":12000", ":12001");
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (!context) throw new Error("useAuth must be used within AuthProvider");
+  return context;
 }
