@@ -7,10 +7,10 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 
-import { Certificate, CertificateDocument } from '../database/schemas/certificate.schema.js';
-import { CacheService, CACHE_KEYS, CACHE_TTL } from '../cache/cache.service.js';
-import { StorageService, generateObjectKey } from '../storage/storage.service.js';
-import { validateFile, getExtensionFromMime } from '../storage/file-validator.js';
+import { Certificate, CertificateDocument } from '../../infrastructure/database/schemas/certificate.schema.js';
+import { CacheService, CACHE_KEYS, CACHE_TTL } from '../../infrastructure/cache/cache.service.js';
+import { StorageService, generateObjectKey } from '../../infrastructure/storage/storage.service.js';
+import { validateFile, getExtensionFromMime } from '../../infrastructure/storage/file-validator.js';
 
 export class CreateCertificateDto {
   title!: string;

@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
-import { DatabaseModule } from './database/database.module.js';
-import { AuthModule } from './auth/auth.module.js';
-import { CacheModule } from './cache/cache.module.js';
-import { StorageModule } from './storage/storage.module.js';
-import { HealthModule } from './health/health.module.js';
-import { UsersModule } from './users/users.module.js';
-import { ResumesModule } from './resumes/resumes.module.js';
-import { CertificatesModule } from './certificates/certificates.module.js';
+import { DatabaseModule } from './infrastructure/database/database.module.js';
+import { AuthModule } from './infrastructure/auth/auth.module.js';
+import { CacheModule } from './infrastructure/cache/cache.module.js';
+import { StorageModule } from './infrastructure/storage/storage.module.js';
+import { HealthModule } from './modules/health/health.module.js';
+import { UsersModule } from './modules/users/users.module.js';
+import { ResumesModule } from './modules/resumes/resumes.module.js';
+import { CertificatesModule } from './modules/certificates/certificates.module.js';
 
 @Module({
   imports: [
@@ -24,3 +24,4 @@ import { CertificatesModule } from './certificates/certificates.module.js';
   ],
 })
 export class AppModule {}
+

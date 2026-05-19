@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
-import { Session } from '../auth/current-user.decorator.js';
-import type { SessionUser } from '../auth/auth.guard.js';
+import { Session } from '../../common/decorators/current-user.decorator.js';
+import type { SessionUser } from '../../common/guards/auth.guard.js';
 import { UsersService } from './users.service.js';
 
 @Controller('users')

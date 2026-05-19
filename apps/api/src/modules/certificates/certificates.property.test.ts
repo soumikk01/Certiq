@@ -2,9 +2,9 @@ import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 import { BadRequestException } from '@nestjs/common';
 
-import { validateFile, getExtensionFromMime } from '../storage/file-validator.js';
-import { generateObjectKey } from '../storage/storage.service.js';
-import { CACHE_KEYS, CACHE_TTL } from '../cache/cache.service.js';
+import { validateFile, getExtensionFromMime } from '../../infrastructure/storage/file-validator.js';
+import { generateObjectKey } from '../../infrastructure/storage/storage.service.js';
+import { CACHE_KEYS, CACHE_TTL } from '../../infrastructure/cache/cache.service.js';
 
 /**
  * Property-based tests for certificates module.

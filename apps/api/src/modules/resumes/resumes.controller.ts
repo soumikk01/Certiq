@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Patch, Delete, Param, Body } from '@nestjs/common';
-import { Session } from '../auth/current-user.decorator.js';
+import { Session } from '../../common/decorators/current-user.decorator.js';
 import { ResumesService } from './resumes.service.js';
 
 @Controller('resumes')

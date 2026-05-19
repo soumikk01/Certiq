@@ -1,0 +1,15 @@
+{
+  "name": "@certiq/utils",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Shared utility functions across all Certiq apps",
+  "license": "UNLICENSED",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "devDependencies": {
+    "@certiq/config": "workspace:*",
+    "typescript": "5.6.2"
+  }
+}

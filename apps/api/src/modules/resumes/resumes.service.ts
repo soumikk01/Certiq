@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { Resume, ResumeDocument } from '../database/schemas/resume.schema.js';
+import { Resume, ResumeDocument } from '../../infrastructure/database/schemas/resume.schema.js';
 
 @Injectable()
 export class ResumesService {

@@ -12,9 +12,9 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 
-import { AuthGuard } from '../auth/auth.guard.js';
-import { Session } from '../auth/current-user.decorator.js';
-import { SessionUser } from '../auth/auth.guard.js';
+import { AuthGuard } from '../../common/guards/auth.guard.js';
+import { Session } from '../../common/decorators/current-user.decorator.js';
+import { SessionUser } from '../../common/guards/auth.guard.js';
 import {
   CertificatesService,
   CreateCertificateDto,
