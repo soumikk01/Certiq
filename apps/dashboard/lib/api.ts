@@ -1,37 +1,18 @@
-import { insforge } from './insforge';
-
 /**
  * API client for the Certiq backend.
  *
- * All requests include the InsForge access token for authentication.
- * The backend validates the token and identifies the user.
+ * Authentication is cookie-based (better-auth session cookie).
+ * All requests include credentials so the browser sends the session cookie automatically.
  */
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:12500/api';
 
-async function getAuthHeaders(): Promise<Record<string, string>> {
-  const { data } = await insforge.auth.getCurrentUser();
-  // The SDK stores the access token internally — we need to get it from the HTTP client
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-  };
-
-  // Get the token from the SDK's internal state
-  // The insforge client exposes headers with the auth token
-  const sdkHeaders = (insforge as any).http?.getHeaders?.();
-  if (sdkHeaders?.Authorization) {
-    headers['Authorization'] = sdkHeaders.Authorization;
-  }
-
-  return headers;
-}
-
 async function apiRequest<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const headers = await getAuthHeaders();
   const response = await fetch(`${API_BASE}${path}`, {
     ...options,
+    credentials: 'include',
     headers: {
-      ...headers,
+      'Content-Type': 'application/json',
       ...(options.headers as Record<string, string> ?? {}),
     },
   });

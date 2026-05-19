@@ -1,42 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-
-interface InsForgeUser {
-  id: string;
-  email: string;
-  name: string | null;
-  avatarUrl: string | null;
-  provider: string;
-}
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { User, UserDocument } from '../database/schemas/user.schema.js';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+  ) {}
 
-  /**
-   * Upsert user from InsForge auth data.
-   * Creates the user if they don't exist, updates if they do.
-   */
-  async syncUser(insforgeUser: InsForgeUser) {
-    return this.prisma.user.upsert({
-      where: { id: insforgeUser.id },
-      update: {
-        email: insforgeUser.email,
-        name: insforgeUser.name,
-        avatarUrl: insforgeUser.avatarUrl,
-        provider: insforgeUser.provider,
-      },
-      create: {
-        id: insforgeUser.id,
-        email: insforgeUser.email,
-        name: insforgeUser.name,
-        avatarUrl: insforgeUser.avatarUrl,
-        provider: insforgeUser.provider,
-      },
-    });
-  }
-
-  async findById(id: string) {
-    return this.prisma.user.findUnique({ where: { id } });
+  async findById(id: string): Promise<UserDocument | null> {
+    return this.userModel.findById(id).exec();
   }
 }
